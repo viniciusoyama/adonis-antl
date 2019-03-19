@@ -122,6 +122,8 @@ class Antl {
    * @param  {Mixed}  [defaultValue = null]
    *
    * @return {Mixed}
+   *
+   * @throws {InvalidArgumentException} If translation is not found
    */
   get (key, defaultValue = null) {
     const [group, ...parts] = key.split('.')
@@ -147,7 +149,15 @@ class Antl {
     debug('getting message for %s key from store', localeNode.join('.'))
     debug('using fallback key as %s', fallbackNode.join('.'))
 
-    return _.get(this._messages, localeNode, _.get(this._messages, fallbackNode, defaultValue))
+    const rawMessage = _.get(this._messages, localeNode, _.get(this._messages, fallbackNode, defaultValue))
+
+    if (!rawMessage) {
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter(`Missing ${this._locale} translation for key '${key}'`)
+    }
+
+    return rawMessage
   }
 
   /**

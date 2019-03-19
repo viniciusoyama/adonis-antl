@@ -109,6 +109,25 @@ test.group('Antl', () => {
     assert.equal(antl.get('validations.age.required', 'translation missing'), 'translation missing')
   })
 
+  test('throw exception when translation is missing', (assert) => {
+    const antl = new Antl('en-us', {
+      'en-us': {
+        'validations': {
+          'name.required': 'Name is required'
+        }
+      },
+      '*': {
+        'validations': {
+          'email.required': 'Email is required'
+        }
+      }
+    })
+
+    const fn = () => antl.get('validations.age.required')
+
+    assert.throw(fn, 'E_INVALID_PARAMETER: Missing en-us translation for key \'validations.age.required\'')
+  })
+
   test('return null when unable to find value and no default value is defined', (assert) => {
     const antl = new Antl('en-us', {
       'en-us': {
